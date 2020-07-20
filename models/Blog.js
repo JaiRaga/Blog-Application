@@ -4,11 +4,17 @@ const { Schema } = mongoose;
 const blogsSchema = new Schema({
   title: {
     type: String,
-    required: true
+    required: true,
+    trim: true
   },
   body: {
     type: String,
-    required: true
+    required: true,
+    trim: true
+  },
+  category: [{ type: String, required: true, trim: true }],
+  readtime: {
+    type: Number
   }
 });
 
