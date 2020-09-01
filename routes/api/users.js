@@ -7,13 +7,11 @@ router.post("/register", async (req, res) => {
   const user = new User(req.body);
   console.log(req.body, user);
   try {
-    console.log(1);
     await user.save();
-    console.log(2);
+
     const token = await user.generateAuthToken();
-    console.log(3);
+
     res.status(201).send({ user, token });
-    console.log(4);
   } catch (e) {
     res.status(400).send(e);
   }
@@ -67,7 +65,7 @@ router.post("/logout", auth, async (req, res) => {
     });
 
     await req.user.save();
-    res.send();
+    res.send("Success..");
   } catch (err) {
     res.status(500).send(err);
   }
