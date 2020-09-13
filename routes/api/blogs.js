@@ -2,29 +2,56 @@ const express = require("express");
 const Blog = require("../../models/Blog");
 const router = express.Router();
 
-// Get blogs from all categories
-router.get("/blogs", async (req, res) => {
+// Create a blog
+router.post("/blogs", async (req, res) => {
+  let { title, body, category, stars } = req.body;
+  let readtime = Math.round(body.length / 200);
+  if (!stars) stars = 4;
+
+  category = category.toLowerCase().replace(" ", "").split(",");
+
+  const blog = new Blog({ title, body, category, readtime, stars });
+
   try {
-    const blogs = await Blog.find();
-    if (!blogs) return res.status(404).send("No blogs found!");
-    res.send(blogs);
+    await blog.save();
+    res.status(201).send(blog);
   } catch (err) {
     res.status(500).send("Server Error");
   }
 });
 
-// Create a blog
-router.post("/blogs", async (req, res) => {
-  let { title, body, category } = req.body;
-  let readtime = Math.round(body.length / 4);
+// Get blogs from all categories
+router.get("/blogs", async (req, res) => {
+  let category = [],
+    sort = {},
+    limit = parseInt(req.query.limit),
+    skip = parseInt(req.query.skip),
+    page = parseInt(req.query.page);
 
-  category = category.replace(" ", "").split(",");
-
-  const blog = new Blog({ title, body, category, readtime });
+  if (req.query.category) {
+    // console.log(match);
+    category = req.query.category.toLowerCase().split(",");
+    console.log(category);
+  }
+  if (req.query.sortBy) {
+    const chunk = req.query.sortBy.split(":");
+    sort[chunk[0]] = chunk[1];
+    console.log(chunk, sort);
+  }
 
   try {
-    await blog.save();
-    res.status(201).send(blog);
+    console.log(1);
+    const blogs = await Blog.find({ category: { $all: category } })
+      .limit(limit)
+      .skip(page * skip)
+      .sort({
+        ...sort
+      });
+
+    console.log(2);
+    console.log("Blogs", blogs);
+    if (!blogs) return res.status(404).send("No blogs found!");
+    res.send(blogs);
   } catch (err) {
     res.status(500).send("Server Error");
   }
