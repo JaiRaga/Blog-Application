@@ -97,18 +97,18 @@ userSchema.methods.toJSON = function () {
 };
 
 userSchema.methods.generateAuthToken = async function () {
-  console.log("gen", 1);
+  // console.log("gen", 1);
   const user = this;
-  console.log("gen", 2);
+  // console.log("gen", 2);
   const token = jwt.sign({ _id: user._id.toString() }, tokenSecret, {
     expiresIn: "7 days"
   });
-  console.log("gen", 3);
+  // console.log("gen", 3);
 
   user.tokens = user.tokens.concat({ token });
-  console.log("gen", 4);
+  // console.log("gen", 4);
   await user.save();
-  console.log("gen", 5);
+  // console.log("gen", 5);
   return token;
 };
 
