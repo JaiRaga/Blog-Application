@@ -1,22 +1,30 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
-const blogsSchema = new Schema({
-  title: {
-    type: String,
-    required: true,
-    trim: true
+const blogsSchema = new Schema(
+  {
+    title: {
+      type: String,
+      required: true,
+      trim: true
+    },
+    body: {
+      type: String,
+      required: true,
+      trim: true
+    },
+    category: [{ type: String, required: true, trim: true }],
+    readtime: {
+      type: Number
+    },
+    stars: {
+      type: Number
+    }
   },
-  body: {
-    type: String,
-    required: true,
-    trim: true
-  },
-  category: [{ type: String, required: true, trim: true }],
-  readtime: {
-    type: Number
+  {
+    timestamps: true
   }
-});
+);
 
 const Blog = mongoose.model("Blog", blogsSchema);
 
