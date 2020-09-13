@@ -19,6 +19,11 @@ const blogsSchema = new Schema(
     },
     stars: {
       type: Number
+    },
+    owner: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      ref: "User"
     }
   },
   {
