@@ -5,12 +5,12 @@ const router = express.Router();
 // Create a blog
 router.post("/blogs", async (req, res) => {
   let { title, body, category, stars } = req.body;
-  let readtime = Math.round(body.length / 200);
+  // let readtime = Math.round(body.length / 200);
   if (!stars) stars = 4;
 
   category = category.toLowerCase().replace(" ", "").split(",");
 
-  const blog = new Blog({ title, body, category, readtime, stars });
+  const blog = new Blog({ title, body, category, stars });
 
   try {
     await blog.save();
@@ -66,6 +66,41 @@ router.get("/blog/:id", async (req, res) => {
     console.log(blog);
 
     if (!blog) return res.status(404).send("No such blog exists!");
+
+    res.send(blog);
+  } catch (err) {
+    res.status(500).send("Server Error");
+  }
+});
+
+// Update blog
+router.patch("/blog/:id", async (req, res) => {
+  const incomingUpdates = Object.keys(req.body),
+    allowedUpdates = ["title", "body", "category", "stars"];
+
+  let approvedUpdates = [],
+    disapprovedUpdates = [];
+
+  incomingUpdates.forEach((update) =>
+    allowedUpdates.indexOf(update) !== -1
+      ? approvedUpdates.push(update)
+      : disapprovedUpdates.push(update)
+  );
+
+  console.log("Approved", approvedUpdates);
+  console.log("Disapproved", disapprovedUpdates);
+
+  try {
+    const blog = await Blog.findById(req.params.id);
+    if (!blog) return res.send("No Such Blog Exists!");
+
+    req.body.category = req.body.category
+      .toLowerCase()
+      .replace(" ", "")
+      .split(",");
+
+    approvedUpdates.forEach((update) => (blog[update] = req.body[update]));
+    await blog.save();
 
     res.send(blog);
   } catch (err) {
