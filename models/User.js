@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const validator = require("validator");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const Blog = require("./Blog");
 const tokenSecret = require("../config/keys").tokenSecret;
 const Schema = mongoose.Schema;
 
@@ -159,7 +160,7 @@ userSchema.pre("save", async function (next) {
 
 userSchema.pre("remove", async function (next) {
   const user = this;
-  await Tweet.deleteMany({ owner: user._id });
+  await Blog.deleteMany({ owner: user._id });
   next();
 });
 
