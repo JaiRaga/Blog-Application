@@ -26,6 +26,16 @@ const blogsSchema = new Schema(
   }
 );
 
+blogsSchema.pre("save", async function (next) {
+  const blog = this;
+
+  blog.isModified("body")
+    ? (blog.readtime = Math.round(blog.body.length / 200))
+    : null;
+
+  next();
+});
+
 const Blog = mongoose.model("Blog", blogsSchema);
 
 module.exports = Blog;
