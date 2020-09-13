@@ -67,7 +67,17 @@ router.post("/logout", auth, async (req, res) => {
     await req.user.save();
     res.send("Success..");
   } catch (err) {
-    res.status(500).send(err);
+    res.status(500).send("Server Error");
+  }
+});
+
+// Delete User
+router.delete("/user/me", auth, async (req, res) => {
+  try {
+    await req.user.remove();
+    res.send(req.user);
+  } catch (err) {
+    res.status(500).send("Server Error");
   }
 });
 
